@@ -2,11 +2,11 @@
   "name": "@fecomponents/excel",
   "version": "1.0.0",
   "description": "",
-  "author": "https://github.com/FEComponents",
+  "author": "yuwangi",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FEComponents/excel.git"
+    "url": "https://github.com/fe-components/excel.git"
   },
   "keywords": [
     "excel",
