@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fe-components/excel.git"
+    "url": "https://github.com/FEComponents/excel.git"
   },
   "keywords": [
     "excel",
@@ -34,7 +34,9 @@
     "stdver": "standard-version -m '[skip ci] chore(release): v%s'",
     "release": "gren release --override"
   },
-  "dependencies": {},
+  "dependencies": {
+    "exceljs": "^4.2.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-transform-runtime": "^7.13.10",
