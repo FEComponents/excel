@@ -7,14 +7,6 @@ import Excel from 'exceljs'
  * @param str 需要转换的字符串
  * @return {ArrayBuffer}
  */
-function s2ab(str) {
-  const buf = new ArrayBuffer(str.length)
-  let view = new Uint8Array(buf)
-  for (let i = 0; i !== str.length; ++i) {
-    view[i] = str.charCodeAt(i) & 0xff
-  }
-  return buf
-}
 
 function getIndexByKey(columns, name) {
   let _index = 0
@@ -150,16 +142,16 @@ export async function exportExcel(
   const font = {name: fontName, family: 4, size: 12}
   const fill = {
     type: 'pattern',
-    pattern: 'solid',
-    fgColor: {argb: 'f8f8f8'}
+    pattern: 'solid'
+    // fgColor: {argb: 'f8f8f8'}
   }
   const border = {style: 'thin', color: {argb: 'cccccc'}}
-
+  const headerBorder = {style: 'thin', color: {argb: '7f5daf34'}}
   columns = columns.map(row => {
     return {
       ...row,
       width: row.minWidth ? row.minWidth / 8 : 10,
-      columns: row.title ? row.title : row.label
+      header: row.title ? row.title : row.label
     }
   })
 
@@ -225,10 +217,10 @@ export async function exportExcel(
           attr: 'font',
           value: font
         },
-        {
-          attr: 'fill',
-          value: fill
-        },
+        // {
+        //   attr: 'fill',
+        //   value: fill
+        // },
         {
           attr: 'border',
           value: borderAttr
@@ -245,16 +237,14 @@ export async function exportExcel(
   } else {
     // 设置表头样式
     worksheet.getRow(1).font = font
-    worksheet.getRow(1).fill = fill
+    // worksheet.getRow(1).fill = fill
+    worksheet.getRow(1).border = {
+      bottom: headerBorder
+    }
     worksheet.getRow(1).height = 40
   }
 
   const bufferContent = await workbook.xlsx.writeBuffer()
-
-  // 设置
-  // ctx.set("Content-disposition", `attachment;filename=${filename}.xlsx`);
-  // 返回文件buffer
-  // ctx.body = bufferContent;
 
   let url = window.URL.createObjectURL(
     new Blob([bufferContent], {
@@ -266,44 +256,10 @@ export async function exportExcel(
   link.style.display = 'none'
   link.href = url
   // 生成时间戳
-  // let timestamp = new Date().getTime();
-  // link.download = timestamp + '.xlsx';
+  let timestamp = new Date().getTime()
+  link.download = filename + timestamp + '.xlsx'
   document.body.appendChild(link)
   link.click()
 
-  // FileSaver.saveAs(
-  //   new Blob([s2ab(bufferContent)], {type: 'application/octet-stream'}),
-  //   fileName + '.xlsx'
-  // )
   callback()
-}
-
-/**
- * 兼容模拟点击 兼容Firefox 47.0.2 and 62.0.2.
- * @param node dom节点
- */
-function click(node) {
-  try {
-    node.dispatchEvent(new MouseEvent('click'))
-  } catch (e) {
-    const evt = document.createEvent('MouseEvents')
-    evt.initMouseEvent(
-      'click',
-      true,
-      true,
-      window,
-      0,
-      0,
-      0,
-      80,
-      20,
-      false,
-      false,
-      false,
-      false,
-      0,
-      null
-    )
-    node.dispatchEvent(evt)
-  }
 }
